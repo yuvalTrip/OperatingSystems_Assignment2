@@ -6,6 +6,22 @@
 #include<stdlib.h>
 #include <sys/wait.h>
 
+char **deleteAllPipes(char **pString);
+
+void removeChar(char *str, const char charToRemmove) {
+    int i, j;
+    int len = strlen(str);
+    for (i = 0; i < len; i++) {
+        if (str[i] == charToRemmove) {
+            for (j = i; j < len; j++) {
+                str[j] = str[j + 1];
+            }
+            len--;
+            i--;
+        }
+    }
+}
+
 //typedef struct cmdLine cmdLine;
 char **allCommands(char *input) {//function create array of all comands from user input
     char **commands = malloc(strlen(input) + 1);
@@ -33,7 +49,7 @@ char **allCommands(char *input) {//function create array of all comands from use
 int countPipes(char *input) {//function count how many pipes in user input
     int pipesNum = 0;
     int i = 0;
-    while (input[i]!='\0') {
+    while (input[i] != '\0') {
         if (input[i] == '|') {
             pipesNum++;
         }
@@ -67,7 +83,7 @@ int input_check(char *input) {
                     char **argv = inputParser(input);
 
                     // according to https://www.youtube.com/watch?v=iq7puCxsgHQ
-                    char *path = "/usr/bin/";
+                    char *path = "/bin/";
                     char *fullPath = (char *) malloc(strlen(path) + sizeof(argv[0]) + 1);
                     strcpy(fullPath, path);
                     strcat(fullPath, argv[0]);
@@ -82,25 +98,224 @@ int input_check(char *input) {
                     // I'm the parent process
                 }
             } else { //string contains pipe
-                // String parsing -->
-                char **argv;
+
+                int numPipes = countPipes(input);
+                //seperate by pipes
+                char **SeperationByPipes;
                 input[strcspn(input, "\n")] = 0;//delete the /n
-                argv = malloc(strlen(input) * sizeof(char *));
-                int i = 0;
+                SeperationByPipes = malloc(strlen(input) * sizeof(char *));
+                int index = 0;
                 //create deep copy to input
-                char* input2;
-                input2 = (char*)malloc(strlen(input) *sizeof (char*));
-                strcpy(input2, input);
+                char *input3;
+                input3 = (char *) malloc(strlen(input) * sizeof(char *));
+                strcpy(input3, input);
+                //separate string by pipes
+                SeperationByPipes[index] = strtok(input3, "|");
+                while (SeperationByPipes[index] != NULL) {
+                    SeperationByPipes[++index] = strtok(NULL, "|");
+                }//now our array look like : [ "cat file1.txt" , "sort"]
+                char **FirstSeperationBySpaces = inputParser(SeperationByPipes[0]);
+                if (!fork()) {//child 1
+                    int file = open("file1.txt", O_WRONLY | O_CREAT, 0777);
+                    dup2(file, STDOUT_FILENO);
+                    close(file);
+                    char *path = "/bin/";
+                    char *fullPath = (char *) malloc(strlen(path) + sizeof(FirstSeperationBySpaces[0]) + 1);
+                    strcpy(fullPath, path);
+                    strcat(fullPath, FirstSeperationBySpaces[0]);
 
-                argv[i] = strtok(input2, " | ");//separate string by pipes
-                while (argv[i] != NULL) {
-                    argv[++i] = strtok(NULL, " | ");
+                    char **env = {NULL};
+                    if (execve(fullPath, FirstSeperationBySpaces, env) ==
+                        -1) //execve will always override the process it run on, in this case it will override the child process
+                    {
+                        perror("error");
+                    }
+                } else {
+                    wait(NULL);
                 }
+                // seperate by space the first element i.e: ["cat","file1.txt"]
+                while (SeperationByPipes != NULL) {
+                    FirstSeperationBySpaces = inputParser(SeperationByPipes[0]);
+                    if (!fork()) {//child 1
+                        int file = open("file1.txt", O_WRONLY | O_CREAT, 0777);
+                        dup2(file, STDOUT_FILENO);
+                        close(file);
+                        char *path = "/bin/";
+                        char *fullPath = (char *) malloc(strlen(path) + sizeof(FirstSeperationBySpaces[0]) + 1);
+                        strcpy(fullPath, path);
+                        strcat(fullPath, FirstSeperationBySpaces[0]);
+
+                        char **env = {NULL};
+                        if (execve(fullPath, FirstSeperationBySpaces, env) ==
+                            -1) //execve will always override the process it run on, in this case it will override the child process
+                        {
+                            perror("error");
+                        }
+                    } else {
+                        wait(NULL);
+                    }
+                    struct stat sb;  // Find file size in bytes
+                    stat(secondArgFilePath, &sb);
+
+                    int bufSize = sb.st_size;
+                    char buf[bufSize];
+                    int scrFile = open(secondArgFilePath, O_RDONLY);
+
+                    if (scrFile > 0) { // there are things to read from the input
+                        read(scrFile, buf, bufSize);
+                        close(scrFile);
+                        char **args = inputParser(buf);
+                        char **fullArgs = malloc(sizeof(args) + sizeof(FirstSeperationBySpaces[0]));
+                        fullArgs[0] = firstArgProgram;
+                        int i = 1;
+                        while (args[i - 1] != NULL) {
+                            fullArgs[i] = args[i - 1];
+                            i++;
+                        }
+                    }
+                    SeperationByPipes++;
+                }
+
                 //find the length of the array
-                int argc = i + 1; // <--
+                //int argc = i + 1; // <--
 
 
-                // piping
+                // now we will start piping by using execve
+
+
+
+
+
+
+
+
+                //char *argument_list = {SeperationBySpaces[0], SeperationBySpaces[1], NULL};
+                //char* argument_list1= (char *) SeperationBySpaces;
+
+                //SeperationBySpaces=deleteAllPipes(SeperationBySpaces);
+                //void removeChar(char * str, char charToRemmove){
+
+                int k;
+                int separationLen = argc - numPipes; //this is the array len
+                //SeperationBySpaces[separationLen]=NULL;
+
+                for (k = 0; k < argc - 1; k++) {
+                    int pd[2];
+                    pipe(pd);
+
+                    if (!fork()) {//child 1
+                        dup2(pd[1], 1); // remap output back to parent
+                        char *path = "/bin/";
+                        char *fullPath = (char *) malloc(strlen(path) + sizeof(FirstSeperationBySpaces[0]) + 1);
+                        strcpy(fullPath, path);
+                        strcat(fullPath, FirstSeperationBySpaces[0]);
+
+                        char **env = {NULL};
+                        if (execve(fullPath, FirstSeperationBySpaces, env) ==
+                            -1) //execve will always override the process it run on, in this case it will override the child process
+                        {
+                            perror("error");
+                        }
+//                        execvp(SeperationBySpaces[0], SeperationBySpaces);
+//                        perror("exec");
+//                        abort();
+                    }
+
+                    // remap output from previous child to input
+                    dup2(pd[0], 0);
+                    close(pd[1]);
+                }
+                // according to https://www.youtube.com/watch?v=iq7puCxsgHQ
+                char *path = "/bin/";
+                char *fullPath = (char *) malloc(strlen(path) + sizeof(FirstSeperationBySpaces[0]) + 1);
+                strcpy(fullPath, path);
+                strcat(fullPath, FirstSeperationBySpaces[0]);
+
+                char **env = {NULL};
+                if (execve(fullPath, FirstSeperationBySpaces, env) ==
+                    -1) //execve will always override the process it run on, in this case it will override the child process
+                {
+                    perror("error");
+                }
+//                execvp(SeperationBySpaces[0], SeperationBySpaces);
+//                perror("exec");
+//                abort();
+            }
+
+
+
+
+
+
+//                int fd[2];
+//                pid_t childpid;
+//                pipe(fd);
+//                childpid=fork();
+//                if (childpid == -1)
+//                {
+//                    perror("Error forking...");
+//                    exit(1);
+//                }
+//                if (childpid)   /*parent proces*/   //grep .c
+//                {
+//                    dup2(fd[0],0);
+//                    execlp(SeperationBySpaces[3],SeperationBySpaces[3],NULL);//argv[2],argv[2],argv[3],NULL
+//                }
+//                if (childpid==0)  //ls
+//                {
+//                    dup2(fd[1],1);
+//                    execlp(argv[1],NULL);
+//                }
+
+
+/*
+                int numPipes = countPipes(input);
+                if(numPipes>10)
+                    exit(0);//if number of pipes is bigger than 10 , break
+
+                int fd[10][2],ind,pc;
+                char *argv[100];
+
+                for(ind=0;ind<numPipes;ind++){
+                    //seperate
+                    tokenize_buffer(argv,&pc,buf[ind]," ");
+                    if(ind!=numPipes-1){
+                        if(pipe(fd[ind])<0){
+                            perror("pipe creating was not successfull\n");
+                            exit(0);
+                        }
+                    }
+                    if(fork()==0){//child1
+                        if(ind!=numPipes-1){
+                            dup2(fd[ind][1],1);
+                            close(fd[ind][0]);
+                            close(fd[ind][1]);
+                        }
+
+                        if(ind!=0){
+                            dup2(fd[ind-1][0],0);
+                            close(fd[ind-1][1]);
+                            close(fd[ind-1][0]);
+                        }
+                        execvp(argv[0],argv);
+                        perror("invalid input ");
+                        exit(1);//in case exec is not successfull, exit
+                    }
+                    //parent
+                    if(i!=0){//second process
+                        close(fd[ind-1][0]);
+                        close(fd[ind-1][1]);
+                    }
+                    wait(NULL);
+                }/*
+
+
+
+
+
+
+
+                /*
                 //void runPipedCommands(cmdLine* command, char* userInput) {
                 int numPipes = countPipes(input);
                 int status;
@@ -115,8 +330,8 @@ int input_check(char *input) {
                         exit(EXIT_FAILURE);
                     }
                 }
-                char **command = allCommands(input);
-
+//                char **command = allCommands(argv);
+                char **commmand = argv;
                 int j = 0;
                 while (*command) {
                     pid = fork();
@@ -155,7 +370,7 @@ int input_check(char *input) {
                     *(command+1) ;
                     j += 2;
                 }
-                /**Parent closes the pipes and wait for children*/
+                //Parent closes the pipes and wait for children
 
                 for (i = 0; i < 2 * numPipes; i++) {
                     close(pipefds[i]);
@@ -163,7 +378,7 @@ int input_check(char *input) {
 
                 for (i = 0; i < numPipes + 1; i++)
                     wait(&status);
-            }
+            } */
 
 
 
@@ -232,7 +447,6 @@ int input_check(char *input) {
     }
     return 0;
 }
-
 
 
 // dest[strcspn(dest, "\n")] = 0;
