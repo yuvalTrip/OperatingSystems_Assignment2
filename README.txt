@@ -3,6 +3,8 @@ We have done the bonuses.
 
 # OperatingSystems_Assignment2
 
+# Script:
+https://www.geeksforgeeks.org/script-command-in-linux-with-examples/
 
 The links we used:
 
