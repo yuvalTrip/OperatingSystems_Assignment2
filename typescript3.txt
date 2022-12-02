@@ -1,0 +1,41 @@
+Script started on 2022-12-02 06:43:00+02:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="80" LINES="24"]
+[?2004h]0;appeldaniel@appeldaniel-virtual-machine: ~/CLionProjects/OperatingSystems_Assignment2[01;32mappeldaniel@appeldaniel-virtual-machine[00m:[01;34m~/CLionProjects/OperatingSystems_Assignment2[00m$ ls } 127.0.0.1:20001
+[?2004lls: cannot access '}': No such file or directory
+ls: cannot access '127.0.0.1:20001': No such file or directory
+[?2004h]0;appeldaniel@appeldaniel-virtual-machine: ~/CLionProjects/OperatingSystems_Assignment2[01;32mappeldaniel@appeldaniel-virtual-machine[00m:[01;34m~/CLionProjects/OperatingSystems_Assignment2[00m$ ls } 127.0.0.1:20001[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K./shell
+[?2004lbash: ./shell: No such file or directory
+[?2004h]0;appeldaniel@appeldaniel-virtual-machine: ~/CLionProjects/OperatingSystems_Assignment2[01;32mappeldaniel@appeldaniel-virtual-machine[00m:[01;34m~/CLionProjects/OperatingSystems_Assignment2[00m$ ./myshell
+[?2004lla } 127.0.0.1^[[D^[[D^[[D                         s } 127.0.0.1:20001
+Socket created successfully
+Connected with server successfully
+Server's response: 
+CMakeLists.txt
+Makefile
+cmake-build-debug
+commands.txt
+ex.txt
+example.txt
+file1.txt
+file4.txt
+mync
+mync.c
+mync.o
+myshell
+myshell.c
+myshell.o
+mytee
+mytee.c
+mytee.o
+shellCode.h
+temp.txt
+typescript.txt
+typescript2.txt
+typescript3.txt
+
+exit
+error: No such file or directory
+^C
+[?2004h]0;appeldaniel@appeldaniel-virtual-machine: ~/CLionProjects/OperatingSystems_Assignment2[01;32mappeldaniel@appeldaniel-virtual-machine[00m:[01;34m~/CLionProjects/OperatingSystems_Assignment2[00m$ exit
+[?2004lexit
+
+Script done on 2022-12-02 06:44:22+02:00 [COMMAND_EXIT_CODE="130"]

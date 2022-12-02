@@ -1,0 +1,11 @@
+Script started on 2022-12-02 06:39:14+02:00 [TERM="xterm-256color" TTY="/dev/pts/4" COLUMNS="80" LINES="24"]
+[?2004h]0;appeldaniel@appeldaniel-virtual-machine: ~/CLionProjects/OperatingSystems_Assignment2[01;32mappeldaniel@appeldaniel-virtual-machine[00m:[01;34m~/CLionProjects/OperatingSystems_Assignment2[00m$ exit./nc -lv 20001[1@m[1@y[C[C[C[C[C[1P[C[C[C[C[C[C[C[C 200011 200010 20001[1P 20001[1P 200011 200012 200017 20001. 200010 20001. 200010 20001. 200011 20001[C[C[C[C[C[C
+[?2004lSocket created successfully
+Connected with server successfully
+asdbjk
+sdkljfgsv
+^C
+[?2004h]0;appeldaniel@appeldaniel-virtual-machine: ~/CLionProjects/OperatingSystems_Assignment2[01;32mappeldaniel@appeldaniel-virtual-machine[00m:[01;34m~/CLionProjects/OperatingSystems_Assignment2[00m$ exit
+[?2004lexit
+
+Script done on 2022-12-02 06:40:13+02:00 [COMMAND_EXIT_CODE="130"]
