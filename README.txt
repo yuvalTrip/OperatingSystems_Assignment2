@@ -9,13 +9,13 @@ The links we used:
 ## Part A
 
 Q.N 1:(mytee)
-https://dev.to/0xbf/implement-tee-cli-in-c-c-lang-2p5c
+* https://dev.to/0xbf/implement-tee-cli-in-c-c-lang-2p5c
 
 Q.N 2:(mync)
-https://phoenixnap.com/kb/nc-command
-https://www.geeksforgeeks.org/c-program-for-char-to-int-conversion/
-https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
-https://www.educative.io/answers/how-to-implement-tcp-sockets-in-c
+* https://phoenixnap.com/kb/nc-command
+* https://www.geeksforgeeks.org/c-program-for-char-to-int-conversion/
+* https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
+* https://www.educative.io/answers/how-to-implement-tcp-sockets-in-c
 
 ## Part B
 
