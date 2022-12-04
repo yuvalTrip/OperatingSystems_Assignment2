@@ -22,9 +22,11 @@ Q.N 2:(mync)
 ## Part B
 
 Q.N 1:(DIR)
+ by typing DIR the file list (of the current directory) will be presented. use opendir(3), readdir(3), closedir(3) DO NOT use system(3) ls(1).
 * https://github.com/Unusual55/OS_Ex1
 
 Q.N 2:(COPY)
+ by typing COPY <src> <dst> a file will be copied.
 * Task number 1
 
 Q.N 3:(shell commands)
@@ -41,6 +43,10 @@ Q.N 5: (redirection)
 * https://www.youtube.com/watch?v=5fnVr-zH-SE
 
 Q.N 6:( use } and { to send and recv the output to TCP:IP4 socket)
+} IP:PORT will open (client) connection to IP:port
+
+{ PORT will open server port (INADDR_ANY) and output the first client connected to stdin. 
+i.e. DIR } 127.0.0.1:3950 will open a connection to localhost and output DIR output
 * https://www.educative.io/answers/how-to-implement-tcp-sockets-in-c
 
 Type Script in case of misunderstand:
